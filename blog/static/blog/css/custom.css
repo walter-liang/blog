@@ -104,10 +104,12 @@ img {
  */
 
 #site-header {
-    background-color: #FFF;
+    /*position: relative;*/
+    background-color: #fff;
     padding: 25px 20px;
     margin-bottom: 40px;
     border-bottom: 1px solid #e7e7e7;
+
 }
 
 .copyrights {
@@ -478,7 +480,7 @@ img {
 }
 
 .search-form {
-    display: none;
+    /*display: none;*/
     width: 25%;
     position: absolute;
     min-width: 200px;
@@ -903,3 +905,5 @@ img {
 .current a {
     color: red;
 }
+
+

@@ -5,6 +5,9 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 # Create your models here.
 
+import markdown
+from django.utils.html import strip_tags
+
 
 class Category(models.Model):
     # 分类表
@@ -40,6 +43,8 @@ class Post(models.Model):
 
     author = models.ForeignKey(User)
 
+    views = models.PositiveIntegerField(default=0)
+
     def __str__(self):
         return self.title
 
@@ -52,9 +57,29 @@ class Post(models.Model):
     def get_absolute_url(self):  # 该方法是用post对象  取得   包含post-id的“URL”
         return reverse('blog:detail', kwargs={'pk': self.pk})
 
+    def increase_views(self):
+        self.views += 1
+        self.save(update_fields=["views"])  # 注意这里使用了 update_fields 参数来告诉 Django 只更新数据库中 views 字段的值，以提高效率。
+
+    def save(self, *args, **kwargs):
+        # 如果没有摘要的
+        if not self.excerpt:
+            # 实例化一个markdown类，来渲染body的文本
+            md = markdown.Markdown(extensions=[
+             'markdown.extensions.extra',
+             'markdown.extensions.codehilite',
+            ])
+            self.excerpt = strip_tags(md.convert(self.body))[:54]
+
+        # 调用父类的 save 方法将数据保存到数据库中
+        super(Post, self).save(*args, **kwargs)
+
     # 这样指定以后所有返回的文章列表都会自动按照 Meta 中指定的顺序排序
     class Meta:
         ordering = ["-created_time"]
+
+
+
 
 
 
